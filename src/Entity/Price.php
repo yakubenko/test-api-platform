@@ -4,9 +4,12 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\PriceRepository;
+use App\Validator\Price as ValidatorPrice;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 #[ORM\Entity(repositoryClass: PriceRepository::class)]
 #[ORM\Table(name: 'prices')]
@@ -24,12 +27,27 @@ class Price
     private ?string $price = null;
 
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
     #[Groups(['price:read', 'price:write'])]
     private ?Currency $currency = null;
 
     #[ORM\ManyToOne(inversedBy: 'prices')]
+    #[ORM\JoinColumn(nullable: false)]
     #[Groups(['price:read', 'price:write'])]
     private ?Variant $variant = null;
+
+    public static function loadValidatorMetadata(ClassMetadata $classMetadata)
+    {
+        $classMetadata->addGetterConstraints('self', [new ValidatorPrice()]);
+
+        $classMetadata->addPropertyConstraints('currency', [
+            new Assert\NotBlank(['allowNull' => false]),
+        ]);
+
+        $classMetadata->addPropertyConstraints('variant', [
+            new Assert\NotBlank(['allowNull' => false]),
+        ]);
+    }
 
     public function getId(): ?int
     {
@@ -69,6 +87,11 @@ class Price
     {
         $this->variant = $variant;
 
+        return $this;
+    }
+
+    public function getSelf()
+    {
         return $this;
     }
 }
