@@ -23,4 +23,12 @@ class PriceRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Price::class);
     }
+
+    /**
+     * @param Price $price Price
+     * @return void
+     */
+    public function handlePriceChange(Price $price)
+    {
+    }
 }
