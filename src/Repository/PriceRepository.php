@@ -5,7 +5,9 @@ namespace App\Repository;
 
 use App\Entity\Price;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
+use DomainException;
 
 /**
  * @extends ServiceEntityRepository<Price>
@@ -30,5 +32,28 @@ class PriceRepository extends ServiceEntityRepository
      */
     public function handlePriceChange(Price $price)
     {
+        $category = $price->getVariant()?->getProduct()?->getCategory();
+
+        if (!$category || $category->isHasMultiplePrices()) {
+            return;
+        }
+
+        $currency = $price->getCurrency();
+        $variants = $price->getVariant()?->getProduct()?->getVariants();
+
+        if (!$currency || !$variants instanceof Collection) {
+            throw new DomainException('Prices can not be updated');
+        }
+
+        $qb = $this->createQueryBuilder('p');
+        $qb->update(Price::class, 'p')
+            ->set('p.price', ':price')
+            ->add('where', $qb->expr()->in('p.variant', ':variants'))
+            ->andWhere('p.currency = :currency')
+            ->setParameter('price', $price->getPrice())
+            ->setParameter('variants', $variants)
+            ->setParameter('currency', $currency)
+            ->getQuery()
+            ->execute();
     }
 }
