@@ -1,0 +1,11 @@
+App\Entity\Price:
+  attributes:
+    normalization_context:
+      skip_null_values: false
+      groups: ['price:read']
+    denormalization_context:
+      disable_type_enforcement: true
+      groups: ['price:write']
+    formats:
+      - jsonapi
+      - json

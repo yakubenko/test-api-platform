@@ -7,6 +7,7 @@ use App\Repository\VariantRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: VariantRepository::class)]
 #[ORM\Table(name: 'variants')]
@@ -15,20 +16,31 @@ class Variant
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['variant:read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'variants')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['variant:read', 'variant:write'])]
     private ?Product $product = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['variant:read', 'variant:write'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['variant:read', 'variant:write'])]
     private ?string $unit = null;
 
     #[ORM\OneToMany(mappedBy: 'variant', targetEntity: Price::class)]
+    #[Groups(['variant:read'])]
     private Collection $prices;
+
+    // It'll be STRING just for this test task. Later it can be presented as a bunch of fields
+    // representing differet types or even be a relation to a dedicated UnitValue::class
+    #[ORM\Column(length: 255)]
+    #[Groups(['variant:read', 'variant:write'])]
+    private ?string $unitValue = null;
 
     public function __construct()
     {
@@ -102,6 +114,18 @@ class Variant
                 $price->setVariant(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUnitValue(): ?string
+    {
+        return $this->unitValue;
+    }
+
+    public function setUnitValue(string $unitValue): self
+    {
+        $this->unitValue = $unitValue;
 
         return $this;
     }

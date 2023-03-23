@@ -1,0 +1,11 @@
+App\Entity\Currency:
+  attributes:
+    normalization_context:
+      skip_null_values: false
+      groups: ['currency:read']
+    denormalization_context:
+      disable_type_enforcement: true
+      groups: ['currency:write']
+    formats:
+      - jsonapi
+      - json

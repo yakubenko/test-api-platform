@@ -1,0 +1,11 @@
+App\Entity\Variant:
+  attributes:
+    normalization_context:
+      skip_null_values: false
+      groups: ['variant:read']
+    denormalization_context:
+      disable_type_enforcement: true
+      groups: ['variant:write']
+    formats:
+      - jsonapi
+      - json

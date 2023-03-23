@@ -1,0 +1,11 @@
+App\Entity\Category:
+  attributes:
+    normalization_context:
+      skip_null_values: false
+      groups: ['category:read']
+    denormalization_context:
+      disable_type_enforcement: true
+      groups: ['category:write']
+    formats:
+      - jsonapi
+      - json

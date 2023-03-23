@@ -1,0 +1,11 @@
+App\Entity\Product:
+  attributes:
+    normalization_context:
+      skip_null_values: false
+      groups: ['product:read']
+    denormalization_context:
+      disable_type_enforcement: true
+      groups: ['product:write']
+    formats:
+      - jsonapi
+      - json

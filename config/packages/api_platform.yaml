@@ -1,9 +1,16 @@
 api_platform:
+    title: 'Test task API'
+    version: 0.0.1
+    show_webby: false
     mapping:
         paths:
             - '%kernel.project_dir%/src/Entity'
             - '%kernel.project_dir%/config/resources'
     patch_formats:
         json: ['application/merge-patch+json']
+    formats:
+        jsonapi: ['application/vnd.api+json']
+        json: ['application/json']
+        html: ['text/html']
     swagger:
         versions: [3]

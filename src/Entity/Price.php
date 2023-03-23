@@ -6,6 +6,7 @@ namespace App\Entity;
 use App\Repository\PriceRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PriceRepository::class)]
 #[ORM\Table(name: 'prices')]
@@ -14,16 +15,20 @@ class Price
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['price:read'])]
     private ?int $id = null;
 
     // As this is just a check task, I use the simplest option
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Groups(['price:read', 'price:write'])]
     private ?string $price = null;
 
     #[ORM\ManyToOne]
+    #[Groups(['price:read', 'price:write'])]
     private ?Currency $currency = null;
 
     #[ORM\ManyToOne(inversedBy: 'prices')]
+    #[Groups(['price:read', 'price:write'])]
     private ?Variant $variant = null;
 
     public function getId(): ?int
