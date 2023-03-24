@@ -19,7 +19,7 @@ build-nc:
 cmd:
 	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) --env-file $(ENV_FILE) exec $(c) $(cmd)
 
-init: | install-deps create-db run-migrations
+init: | install-deps create-db run-migrations seed-initial-data
 
 install-deps:
 	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) --env-file $(ENV_FILE) exec phpfpm composer install
@@ -29,6 +29,9 @@ create-db:
 
 run-migrations:
 	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) --env-file $(ENV_FILE) exec phpfpm bin/console doctrine:migrations:migrate
+
+seed-initial-data:
+	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) --env-file $(ENV_FILE) exec phpfpm bin/console app:seed-initial-data
 
 build-and-start:
 	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) --env-file $(ENV_FILE) up -d  --build $(c)
